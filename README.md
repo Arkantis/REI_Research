@@ -1,46 +1,37 @@
-```markdown
-# Property Intelligence Pipeline — Plugin Architecture  
-A beginner‑friendly guide to understanding, using, and extending your modular U.S. property‑analysis system.
-
----
-
+# 🏗 Property Intelligence Plugin Pipeline
 ## 📌 Overview
-
-This project is a **plugin‑based pipeline** that analyzes any U.S. property address across all 50 states. It normalizes addresses, discovers official public‑record sources, retrieves property and location data, and generates a deterministic screening report.
+This project is a modular, plugin‑based pipeline for analyzing any U.S. property address across all 50 states. It normalizes addresses, discovers official public‑record sources, retrieves property and location data, and generates a deterministic screening report.
 
 The system is designed to be:
 
-- **Modular** — each plugin runs independently  
-- **Composable** — plugins chain together into a full pipeline  
-- **Extensible** — new plugins can be added without changing existing ones  
-- **Database‑friendly** — outputs can be saved directly into PostgreSQL  
-- **Beginner‑friendly** — simple Python functions, no frameworks  
+### ✔ Modular — each plugin can run independently
 
-This README explains how each plugin works, how they interact, how to run them, and what you need to get started.
+### ✔ Composable — plugins can be chained together into a full pipeline
 
----
+### ✔ Extensible — new plugins can be added without changing the pipeline
 
-# 🧩 Plugin List
+### ✔ Database‑friendly — outputs can be saved directly into PostgreSQL
 
-Your pipeline consists of **five plugins**, each responsible for one stage of the workflow:
+### ✔ Beginner‑friendly — simple Python functions, no complex frameworks
 
-| Plugin | File | Purpose |
-|--------|------|---------|
-| **Address Normalizer** | `plugins/address_normalizer.py` | Cleans and standardizes addresses; adds county + coordinates |
-| **Source Registry** | `plugins/source_registry.py` | Discovers and validates official public‑record sources |
-| **Public Records** | `plugins/public_records.py` | Retrieves and normalizes property‑record data |
-| **Location & Market** | `plugins/location_market.py` | Retrieves FEMA flood data + location/market context |
-| **Screening Report** | `plugins/screening_report.py` | Builds deterministic recommendation and risk flags |
 
-Each plugin exposes **one clean entrypoint function**, making them easy to test and reuse.
+# Plugin Architecture
+Your pipeline consists of five plugins, each responsible for one stage of the property intelligence workflow:
 
----
+# Plugin	Purpose	Input	Output
+address_normalizer | Clean & standardize addresses, add county + coordinates | Raw address string | Canonical normalized address object
+source_registry | Discover & validate official public‑record sources | Normalized address | Verified source list (primary + alternates)
+public_records | Retrieve & normalize property records	Normalized address + sources | Standardized property record objects
+location_market | Retrieve FEMA flood data + infer location/market context | Normalized address + sources | Location risks + market snapshot
+screening_report | Build deterministic recommendation | Public records + location/market | Final screening report
 
-# 🔗 How Plugins Work Together
 
+Each plugin exposes one clean entrypoint function, making them easy to test and reuse.
+
+How the Plugins Work Together
 The pipeline flows like this:
 
-```
+Code
 Raw Address
     ↓
 address_normalizer.get_normalized_address()
@@ -54,12 +45,8 @@ location_market.get_location_and_market()
 screening_report.get_screening_report()
     ↓
 Final JSON report (ready for PostgreSQL)
-```
-
-Every plugin receives structured input and returns structured output.  
+Every plugin receives structured input and returns structured output.
 No plugin writes files, touches the CLI, or depends on external modules.
-
----
 
 # 🧪 Can Plugins Run Independently?
 
